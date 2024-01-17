@@ -4,6 +4,9 @@ import { S3 } from "@aws-sdk/client-s3";
 import _dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+
+// const cors = require('cors');
+
 _dayjs.extend(utc);
 _dayjs.extend(timezone);
 _dayjs.tz.setDefault("Asia/Seoul");
@@ -15,7 +18,7 @@ export function kdayjs(params?: any) {
 const s3Client = new S3({
   forcePathStyle: false, // Configures to use subdomain/virtual calling format.
   //   endpoint: "",
-  region: process.env.NEXT_AWS_S3_BUCKET_REGION,
+  region: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_REGION,
   credentials: {
     accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID ?? "",
     secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY ?? "",
@@ -31,7 +34,7 @@ export async function uploadS3Image(file: File, keys: string[]) {
     )}/${kdayjs().format("DD")}/${file.name}`;
     const params = {
       Body: file,
-      Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME ?? "",
+      Bucket: "test4342" ,
       Key: s3Key,
       ACL: "public-read" as any,
     };

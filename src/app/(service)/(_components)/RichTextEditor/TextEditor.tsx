@@ -5,6 +5,8 @@ import "react-quill/dist/quill.snow.css";
 
 import { uploadS3Image } from "@shared/utils/uploadS3";
 
+
+
 const ReactQuill = dynamic(
   async () => {
     const { default: RQ } = await import("react-quill");
@@ -20,7 +22,8 @@ const ReactQuill = dynamic(
 );
 export default function RichTextEditorWithIframe({ value, onChange }) {
   const editorRef = useRef<any>();
-  const handleImageUpload = async () => {
+
+    const handleImageUpload = async () => {
     const input = document.createElement("input");
     const quill = editorRef.current.getEditor();
     let fileInput = quill.root.querySelector("input.ql-image[type=file]");
@@ -40,6 +43,7 @@ export default function RichTextEditorWithIframe({ value, onChange }) {
         }
         quill.enable(false);
         const uploadImageUrl = await uploadS3Image(files[0] as any, ["posts"]);
+
         quill.enable(true);
         quill.insertEmbed(range.index, "image", uploadImageUrl);
         quill.setSelection(range.index + 1);
@@ -50,11 +54,21 @@ export default function RichTextEditorWithIframe({ value, onChange }) {
     fileInput.click();
   };
 
+  function YoutubeEmbedReplace(value){
+        value = value.replace("youtube.com/watch?v=", "youtube.com/embed/");
+        value = value.replace("youtube.com/v/", "youtube.com/embed/");
+        return value;
+  }
+
   function iframeHandler() {
     const quill = editorRef.current.getEditor();
-    const value = prompt("Enter the iframe URL");
-    const range = quill.getSelection(true);
-    quill.root.innerHTML += value;
+    let value = prompt("Enter the iframe URL");
+    if( value != "" ){
+            value = YoutubeEmbedReplace(value);
+
+            const range = quill.getSelection(true);
+            quill.insertEmbed(range.index, 'video', value);
+    }
   }
   const modules = useMemo(
     () => ({
